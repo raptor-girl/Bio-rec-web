@@ -1,0 +1,13 @@
+<svg width="1200" height="1500" viewBox="0 0 1200 1500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1500" rx="56" fill="#F4F7F5"/>
+  <rect x="100" y="120" width="1000" height="1260" rx="44" fill="#FFFFFF" stroke="#DDE5E0"/>
+  <circle cx="600" cy="520" r="210" fill="#EAF3EE"/>
+  <circle cx="515" cy="490" r="58" fill="#1F5A42"/>
+  <circle cx="685" cy="490" r="58" fill="#1F5A42"/>
+  <path d="M495 620C530 690 670 690 705 620" stroke="#1F5A42" stroke-width="22" stroke-linecap="round"/>
+  <path d="M440 810H760" stroke="#123629" stroke-width="26" stroke-linecap="round"/>
+  <path d="M380 910H820" stroke="#D9E8DF" stroke-width="28" stroke-linecap="round"/>
+  <path d="M410 980H790" stroke="#D9E8DF" stroke-width="28" stroke-linecap="round"/>
+  <text x="600" y="1185" text-anchor="middle" fill="#123629" font-family="Inter, Arial, sans-serif" font-size="74" font-weight="800">BIO-REC LTDA</text>
+  <text x="600" y="1268" text-anchor="middle" fill="#51605A" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="500">Espacio para imagen institucional real</text>
+</svg>

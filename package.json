@@ -1,0 +1,20 @@
+{
+  "name": "biorecpage",
+  "version": "1.0.0",
+  "description": "Sitio corporativo para BIO-REC LTDA",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "bio-rec",
+    "express",
+    "corporate-site"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

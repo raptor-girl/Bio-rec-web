@@ -1,0 +1,14 @@
+<svg width="1200" height="1500" viewBox="0 0 1200 1500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1500" rx="56" fill="#EAF3EE"/>
+  <circle cx="960" cy="220" r="220" fill="#D9E8DF"/>
+  <circle cx="260" cy="1260" r="240" fill="#D9E8DF"/>
+  <rect x="120" y="1100" width="960" height="220" rx="28" fill="#123629"/>
+  <rect x="180" y="180" width="560" height="54" rx="27" fill="#1F5A42" fill-opacity="0.18"/>
+  <rect x="180" y="262" width="400" height="30" rx="15" fill="#1F5A42" fill-opacity="0.12"/>
+  <rect x="180" y="320" width="620" height="30" rx="15" fill="#1F5A42" fill-opacity="0.12"/>
+  <rect x="180" y="378" width="480" height="30" rx="15" fill="#1F5A42" fill-opacity="0.12"/>
+  <rect x="180" y="900" width="300" height="28" rx="14" fill="#1F5A42" fill-opacity="0.18"/>
+  <text x="180" y="710" fill="#123629" font-family="Inter, Arial, sans-serif" font-size="84" font-weight="800">BIO-REC LTDA</text>
+  <text x="180" y="800" fill="#51605A" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="500">Imagen temporal para portada</text>
+  <text x="180" y="1165" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="700">Extracción y manejo sustentable de residuos</text>
+</svg>
