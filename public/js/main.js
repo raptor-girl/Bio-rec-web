@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const regions = Array.from(map.querySelectorAll('.map-region.is-active[data-map-key]'));
+    const regions = Array.from(map.querySelectorAll('.map-region.is-active[data-map-key], .map-marker[data-map-key]'));
     const rows = Array.from(document.querySelectorAll('[data-map-row]'));
     let selectedKey = null;
 
