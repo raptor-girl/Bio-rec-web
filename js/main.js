@@ -420,6 +420,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initRmMap();
 
+  const initProductDetails = () => {
+    const toggles = document.querySelectorAll('[data-product-toggle]');
+
+    toggles.forEach((toggle) => {
+      const detailId = toggle.getAttribute('aria-controls');
+      const detail = detailId ? document.getElementById(detailId) : null;
+      const openText = 'Ocultar detalle';
+      const closedText = toggle.textContent.trim();
+
+      if (!detail) {
+        return;
+      }
+
+      toggle.addEventListener('click', () => {
+        const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+
+        toggle.setAttribute('aria-expanded', String(!isOpen));
+        detail.hidden = isOpen;
+        toggle.textContent = isOpen ? closedText : openText;
+      });
+    });
+  };
+
+  initProductDetails();
+
   const closeMenu = () => {
     if (!menuToggle || !navMenu) {
       return;
@@ -438,6 +463,155 @@ document.addEventListener('DOMContentLoaded', () => {
       menuToggle.setAttribute('aria-expanded', String(isOpen));
     });
   }
+
+  const initActiveNavigation = () => {
+    const menuLinks = Array.from(document.querySelectorAll('.site-nav a:not(.btn)'));
+
+    if (menuLinks.length === 0) {
+      return;
+    }
+
+    const sectionByPage = {
+      'index.html': 'inicio',
+      'servicios.html': 'servicios',
+      'nosotros.html': 'nosotros',
+      'contacto.html': 'contacto',
+    };
+
+    const normalizePage = (pathname) => {
+      const page = pathname.split('/').filter(Boolean).pop();
+
+      return page || 'index.html';
+    };
+
+    const currentPage = normalizePage(window.location.pathname);
+    const currentSection = sectionByPage[currentPage] || '';
+    const sectionForLink = (link) => {
+      const href = link.getAttribute('href');
+
+      if (!href) {
+        return '';
+      }
+
+      const url = new URL(href, window.location.href);
+      const page = normalizePage(url.pathname);
+
+      return url.hash ? url.hash.slice(1) : sectionByPage[page] || '';
+    };
+
+    const setActiveLink = (sectionId) => {
+      menuLinks.forEach((link) => {
+        const isActive = sectionForLink(link) === sectionId;
+
+        link.classList.toggle('is-active', isActive);
+
+        if (isActive) {
+          link.setAttribute('aria-current', 'page');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
+    };
+
+    const observedSections = new Map();
+    const addObservedSection = (element, sectionId) => {
+      if (element && sectionId) {
+        observedSections.set(element, sectionId);
+      }
+    };
+
+    if (currentPage === 'index.html') {
+      addObservedSection(document.querySelector('main #inicio') || document.querySelector('main .hero'), 'inicio');
+    }
+
+    document.querySelectorAll('main section[id]').forEach((section) => {
+      const sectionId = section.getAttribute('id');
+
+      if (Object.values(sectionByPage).includes(sectionId)) {
+        addObservedSection(section, sectionId);
+      }
+    });
+
+    addObservedSection(document.querySelector('.site-footer'), 'contacto');
+    setActiveLink(currentSection || 'inicio');
+
+    const getHeaderOffset = () => (header ? header.offsetHeight : 0);
+    let activeNavFrame = null;
+    const updateActiveByScroll = () => {
+      const probeLine = getHeaderOffset() + window.innerHeight * 0.35;
+      let activeSection = currentSection || 'inicio';
+
+      observedSections.forEach((sectionId, section) => {
+        const rect = section.getBoundingClientRect();
+        const isFooter = section.classList.contains('site-footer');
+
+        if (isFooter) {
+          if (rect.top <= window.innerHeight - 120) {
+            activeSection = sectionId;
+          }
+
+          return;
+        }
+
+        if (rect.top <= probeLine && rect.bottom > getHeaderOffset() + 24) {
+          activeSection = sectionId;
+        }
+      });
+
+      setActiveLink(activeSection);
+    };
+    const requestActiveUpdate = () => {
+      if (activeNavFrame) {
+        return;
+      }
+
+      activeNavFrame = window.requestAnimationFrame(() => {
+        activeNavFrame = null;
+        updateActiveByScroll();
+      });
+    };
+
+    window.addEventListener('scroll', requestActiveUpdate, { passive: true });
+    window.addEventListener('resize', requestActiveUpdate);
+    window.addEventListener('load', requestActiveUpdate);
+    window.setTimeout(updateActiveByScroll, 300);
+
+    let activeNavChecks = 0;
+    const activeNavInterval = window.setInterval(() => {
+      updateActiveByScroll();
+      activeNavChecks += 1;
+
+      if (activeNavChecks >= 16) {
+        window.clearInterval(activeNavInterval);
+      }
+    }, 250);
+
+    if (!('IntersectionObserver' in window) || observedSections.size === 0) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      () => requestActiveUpdate(),
+      {
+        rootMargin: `-${getHeaderOffset() + 16}px 0px -45% 0px`,
+        threshold: [0.12, 0.32, 0.56],
+      }
+    );
+
+    observedSections.forEach((_, section) => observer.observe(section));
+
+    menuLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        const sectionId = sectionForLink(link);
+
+        if (sectionId) {
+          setActiveLink(sectionId);
+        }
+      });
+    });
+  };
+
+  initActiveNavigation();
 
   navLinks.forEach((link) => {
     link.addEventListener('click', (event) => {

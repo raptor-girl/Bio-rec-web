@@ -7,7 +7,7 @@
       name="description"
       content="BIO-REC LTDA: extracción y manejo sustentable de residuos domiciliarios y empresariales."
     />
-    <title>BIO-REC LTDA | Gestion sustentable de residuos</title>
+    <title>Contacto | BIO-REC LTDA</title>
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23123629'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-size='24' font-family='Arial' font-weight='700' fill='white'%3EBR%3C/text%3E%3C/svg%3E"
@@ -50,31 +50,67 @@
 
     <main>
       
-      <section class="hero section-shell">
-        <div class="container hero-grid">
-          <div class="hero-copy reveal">
-            <p class="eyebrow">Gestión responsable de residuos</p>
-            <h1>Soluciones confiables para una operación limpia, eficiente y sustentable.</h1>
-            <p class="lead">
-              En BIO-REC LTDA desarrollamos servicios de extracción y manejo de residuos domiciliarios y empresariales con foco en seguridad, continuidad operativa y cuidado del entorno.
+
+      <section class="section section-muted" id="contacto">
+        <div class="container contact-grid">
+          <div class="contact-copy reveal">
+            <p class="eyebrow">Contacto</p>
+            <h2>Hablemos sobre la solución que necesita su empresa o comunidad.</h2>
+            <p>
+              Complete el formulario y deje sus datos para que podamos revisar su solicitud. Por ahora, el envío queda preparado visualmente para la siguiente etapa del proyecto.
             </p>
-            <div class="hero-actions">
-              <a class="btn btn-primary" href="contacto.html">Solicitar contacto</a>
-              <a class="btn btn-secondary" href="servicios.html">Ver servicios</a>
+            <div class="contact-box">
+              <span>Teléfono directo</span>
+              <a href="tel:+56228426640">(2) 2842 6640</a>
             </div>
           </div>
 
-          <div class="hero-media reveal">
-            <div class="hero-image-card">
-              <img
-                class="hero-photo"
-                src="img/empresa/12.jpeg"
-                alt="Flota de camiones BIO-REC LTDA en terreno con cielo despejado"
-                fetchpriority="high"
-                decoding="async"
-              />
+          <form class="contact-form reveal" id="contact-form" novalidate>
+            <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+            <div class="form-row">
+              <label for="nombre">Nombre</label>
+              <input id="nombre" name="nombre" type="text" placeholder="Tu nombre" autocomplete="name" required />
+              <small class="field-error" id="nombre-error"></small>
             </div>
-          </div>
+            <div class="form-row">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="correo@empresa.cl" autocomplete="email" required />
+              <small class="field-error" id="email-error"></small>
+            </div>
+            <div class="form-row">
+              <label for="telefono">Teléfono</label>
+              <input id="telefono" name="telefono" type="tel" placeholder="+56 9 0000 0000" autocomplete="tel" />
+              <small class="field-error" id="telefono-error"></small>
+            </div>
+            <div class="form-row">
+              <label for="empresa">Empresa</label>
+              <input id="empresa" name="empresa" type="text" placeholder="Nombre de la empresa" autocomplete="organization" />
+              <small class="field-error" id="empresa-error"></small>
+            </div>
+            <div class="form-row">
+              <label for="ciudad">Ciudad</label>
+              <input id="ciudad" name="ciudad" type="text" placeholder="Comuna o ciudad" />
+              <small class="field-error" id="ciudad-error"></small>
+            </div>
+            <div class="form-row">
+              <label for="servicio">Servicio requerido</label>
+              <select id="servicio" name="servicio">
+                <option value="">Selecciona una opción</option>
+                <option>Recolección domiciliaria</option>
+                <option>Manejo de residuos empresariales</option>
+                <option>Productos y maquinaria</option>
+                <option>Contenedores plásticos o metálicos</option>
+                <option>Mantención de áreas verdes</option>
+              </select>
+              <small class="field-error" id="servicio-error"></small>
+            </div>
+            <div class="form-row form-row-full">
+              <label for="mensaje">Mensaje</label>
+              <textarea id="mensaje" name="mensaje" rows="5" placeholder="Cuéntanos brevemente qué necesitas" required></textarea>
+              <small class="field-error" id="mensaje-error"></small>
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">Enviar consulta</button>
+          </form>
         </div>
       </section>
     </main>
