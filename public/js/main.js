@@ -727,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearStatus();
   });
 
-  contactForm.addEventListener('submit', (event) => {
+  contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     clearStatus();
 
@@ -738,10 +738,26 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Sitio estático sin backend: para recibir las solicitudes, integrar un
-    // servicio de formularios (Formspree, cPanel forms) o un enlace mailto
-    // cuando exista una casilla de correo corporativa definida.
-    showStatus('Solicitud recibida correctamente. Pronto nos pondremos en contacto.', 'success');
-    contactForm.reset();
+    try {
+      const formData = Object.fromEntries(new FormData(contactForm).entries());
+      const response = await fetch('/contacto', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const result = await response.json();
+
+      if (!response.ok || !result.ok) {
+        showStatus(result.message || 'No pudimos procesar la solicitud. Intenta nuevamente.', 'error');
+        return;
+      }
+
+      showStatus(result.message || 'Solicitud recibida correctamente. Pronto nos pondremos en contacto.', 'success');
+      contactForm.reset();
+    } catch (error) {
+      showStatus('No pudimos conectar con el servidor. Intenta nuevamente.', 'error');
+    }
   });
 });

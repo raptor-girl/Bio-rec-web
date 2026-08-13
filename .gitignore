@@ -1,8 +1,11 @@
 .env
+node_modules/
 .DS_Store
+npm-debug.log
 .vscode/
 dist/
 build/
+coverage/
 test-results/
 tmp-*.out
 tmp-*.err
