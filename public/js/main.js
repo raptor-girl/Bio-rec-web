@@ -739,6 +739,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
+      showStatus('Enviando...', 'success');
       const formData = Object.fromEntries(new FormData(contactForm).entries());
       const response = await fetch('/contacto', {
         method: 'POST',
@@ -750,14 +751,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const result = await response.json();
 
       if (!response.ok || !result.ok) {
-        showStatus(result.message || 'No pudimos procesar la solicitud. Intenta nuevamente.', 'error');
+        showStatus(result.message || 'No se pudo enviar el mensaje. Intenta nuevamente.', 'error');
         return;
       }
 
-      showStatus(result.message || 'Solicitud recibida correctamente. Pronto nos pondremos en contacto.', 'success');
+      showStatus(result.message || 'Mensaje enviado correctamente.', 'success');
       contactForm.reset();
     } catch (error) {
-      showStatus('No pudimos conectar con el servidor. Intenta nuevamente.', 'error');
+      showStatus('No se pudo enviar el mensaje. Intenta nuevamente.', 'error');
     }
   });
 });

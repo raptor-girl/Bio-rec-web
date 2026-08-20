@@ -11,7 +11,7 @@ Configuracion definida en el hosting:
 - Modo: `Production`
 - Variable de entorno: `NODE_ENV=production`
 - Base de datos: no aplica
-- Correos: no integrados todavia en la aplicacion
+- Correos: integrados por SMTP con variables de entorno de cPanel
 
 ## A. Preparacion local
 
@@ -78,11 +78,20 @@ Configuracion definida en el hosting:
    server.js
    ```
 
-8. Confirmar la variable de entorno:
+8. Confirmar las variables de entorno:
 
    ```text
    NODE_ENV=production
+   SMTP_HOST=mail.bio-rec.com
+   SMTP_PORT=465
+   SMTP_SECURE=true
+   SMTP_USER=contacto@bio-rec.com
+   SMTP_PASS=CAMBIAR_EN_CPANEL
+   CONTACT_TO=contacto@bio-rec.com
+   CONTACT_FROM=contacto@bio-rec.com
    ```
+
+   `SMTP_PASS` debe configurarse solo en cPanel. No subir contrasenas ni crear un archivo `.env` real en el repositorio.
 
 9. Clonar el repositorio dentro de `biorec-app` o subir ahi los archivos del proyecto:
 
@@ -91,6 +100,8 @@ Configuracion definida en el hosting:
    ```
 
    Si la carpeta no esta vacia, usar el flujo de Git indicado por el hosting o subir los archivos manualmente, cuidando que `server.js`, `package.json`, `package-lock.json` y `public/` queden en la raiz de `biorec-app`.
+
+   Despues de cada `git pull` o subida de cambios que modifique dependencias, ejecutar nuevamente la instalacion de produccion.
 
 10. Desde la terminal del hosting, entrar a `biorec-app` y ejecutar:
 
@@ -130,7 +141,7 @@ Configuracion definida en el hosting:
 1. Abrir `https://bio-rec.com`.
 2. Abrir `https://www.bio-rec.com`.
 3. Revisar que carguen todas las imagenes.
-4. Revisar que el formulario responda correctamente, sin enviar correos reales todavia.
+4. Revisar que el formulario envie el correo real a `contacto@bio-rec.com`.
 5. Revisar la navegacion principal.
 6. Revisar footer, mapa y secciones internas.
 7. Revisar responsive en movil y escritorio.
@@ -141,8 +152,9 @@ Configuracion definida en el hosting:
    POST /contacto
    ```
 
-10. Confirmar que la aplicacion no usa base de datos.
-11. Confirmar que no se subieron `.env` ni `node_modules`.
+10. Probar el formulario con un mensaje interno breve y confirmar recepcion en `contacto@bio-rec.com`.
+11. Confirmar que la aplicacion no usa base de datos.
+12. Confirmar que no se subieron `.env` ni `node_modules`.
 
 ## Checklist de seguridad inicial
 
@@ -151,6 +163,7 @@ Configuracion definida en el hosting:
 - No existe `.env` publico.
 - No se subio `node_modules`.
 - No hay credenciales en GitHub.
+- `SMTP_PASS` esta solo en variables de entorno de cPanel.
 - No hay rutas locales del computador en HTML, CSS, JavaScript o servidor.
 - No se usa base de datos.
 - Formulario valida datos en frontend y backend.
