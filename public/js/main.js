@@ -664,16 +664,21 @@ document.addEventListener('DOMContentLoaded', () => {
     nombre: 'Ingresa tu nombre.',
     email: 'Ingresa tu email.',
     telefono: 'Ingresa tu teléfono.',
+    ciudad: 'Selecciona una región.',
     mensaje: 'Cuéntanos brevemente qué necesitas.',
   };
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const messageMaxLength = 1000;
+  const phoneDigitsLength = 8;
   const fieldNames = ['nombre', 'email', 'telefono', 'empresa', 'ciudad', 'servicio', 'mensaje'];
   const getField = (name) => contactForm.elements.namedItem(name);
   const messageCounter = document.querySelector('#mensaje-counter');
   const submitButton = contactForm.querySelector('button[type="submit"]');
   const submitButtonText = submitButton ? submitButton.textContent : '';
+  const regionOptions = Array.from(getField('ciudad') ? getField('ciudad').options : [])
+    .map((option) => option.value.trim())
+    .filter(Boolean);
 
   const setFieldError = (name, message = '') => {
     const field = getField(name);
@@ -732,11 +737,51 @@ document.addEventListener('DOMContentLoaded', () => {
     messageCounter.classList.toggle('is-limit', currentLength > messageMaxLength);
   };
 
+  const getPhoneDigitsFromValue = (value) => {
+    const digits = value.replace(/\D/g, '');
+
+    if (digits.startsWith('569') && digits.length >= 11) {
+      return digits.slice(3, 11);
+    }
+
+    return digits.slice(0, phoneDigitsLength);
+  };
+
+  const getPhoneDigits = () => {
+    const phoneField = getField('telefono');
+
+    return phoneField ? getPhoneDigitsFromValue(phoneField.value) : '';
+  };
+
+  const formatPhoneDigits = (digits) => {
+    if (digits.length <= 4) {
+      return digits;
+    }
+
+    return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+  };
+
+  const normalizePhoneField = () => {
+    const phoneField = getField('telefono');
+
+    if (!phoneField) {
+      return '';
+    }
+
+    const digits = getPhoneDigits();
+    phoneField.value = formatPhoneDigits(digits);
+
+    return digits;
+  };
+
+  const formatFullPhone = (digits) => `+56 9 ${digits.slice(0, 4)} ${digits.slice(4)}`;
+
   const validateForm = () => {
     const errors = {};
     const nombre = getField('nombre').value.trim();
     const email = getField('email').value.trim();
-    const telefono = getField('telefono').value.trim();
+    const telefonoDigits = normalizePhoneField();
+    const region = getField('ciudad').value.trim();
     const mensaje = getField('mensaje').value.trim();
 
     if (!nombre) {
@@ -749,8 +794,14 @@ document.addEventListener('DOMContentLoaded', () => {
       errors.email = 'Ingresa un email válido.';
     }
 
-    if (!telefono) {
-      errors.telefono = requiredMessages.telefono;
+    if (!telefonoDigits || telefonoDigits.length !== phoneDigitsLength) {
+      errors.telefono = 'Ingresa un teléfono válido de 8 dígitos.';
+    }
+
+    if (!region) {
+      errors.ciudad = requiredMessages.ciudad;
+    } else if (!regionOptions.includes(region)) {
+      errors.ciudad = requiredMessages.ciudad;
     }
 
     if (!mensaje) {
@@ -776,6 +827,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setFieldError(field.name);
     clearStatus();
 
+    if (field.name === 'telefono') {
+      normalizePhoneField();
+    }
+
     if (field.name === 'mensaje') {
       updateMessageCounter();
     }
@@ -798,7 +853,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       showStatus('Enviando...', 'success');
+      const telefonoDigits = normalizePhoneField();
       const formData = Object.fromEntries(new FormData(contactForm).entries());
+      formData.telefono = formatFullPhone(telefonoDigits);
       const response = await fetch('/contacto', {
         method: 'POST',
         headers: {

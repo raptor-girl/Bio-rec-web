@@ -22,6 +22,24 @@ const SMTP_ENV_KEYS = [
   "CONTACT_TO",
   "CONTACT_FROM",
 ];
+const CHILE_REGIONS = [
+  "Arica y Parinacota",
+  "Tarapacá",
+  "Antofagasta",
+  "Atacama",
+  "Coquimbo",
+  "Valparaíso",
+  "Región Metropolitana de Santiago",
+  "Libertador General Bernardo O’Higgins",
+  "Maule",
+  "Ñuble",
+  "Biobío",
+  "La Araucanía",
+  "Los Ríos",
+  "Los Lagos",
+  "Aysén del General Carlos Ibáñez del Campo",
+  "Magallanes y de la Antártica Chilena",
+];
 
 app.disable("x-powered-by");
 
@@ -124,10 +142,13 @@ function normalizeField(value) {
 }
 
 function normalizeContactData(body) {
+  const telefonoRaw = normalizeField(body.telefono);
+
   return {
     nombre: normalizeField(body.nombre),
     email: normalizeField(body.email),
-    telefono: normalizeField(body.telefono),
+    telefonoRaw,
+    telefono: normalizeChileanMobilePhone(telefonoRaw),
     empresa: normalizeField(body.empresa),
     ciudad: normalizeField(body.ciudad),
     servicio: normalizeField(body.servicio),
@@ -148,8 +169,16 @@ function validateContactData(contactData) {
     errors.email = "Ingresa un email valido.";
   }
 
-  if (!contactData.telefono) {
+  if (!contactData.telefonoRaw) {
     errors.telefono = "Ingresa tu telefono.";
+  } else if (!contactData.telefono) {
+    errors.telefono = "Ingresa un telefono valido de 8 digitos.";
+  }
+
+  if (!contactData.ciudad) {
+    errors.ciudad = "Selecciona una region.";
+  } else if (!CHILE_REGIONS.includes(contactData.ciudad)) {
+    errors.ciudad = "Selecciona una region.";
   }
 
   if (!contactData.mensaje) {
@@ -177,6 +206,27 @@ function getMaxLengthMessage(field) {
   };
 
   return messages[field] || "El campo es demasiado extenso.";
+}
+
+function normalizeChileanMobilePhone(value) {
+  const rawValue = normalizeField(value);
+
+  if (!rawValue || !/^[+\d\s]+$/.test(rawValue)) {
+    return "";
+  }
+
+  const digits = rawValue.replace(/\D/g, "");
+  let localDigits = "";
+
+  if (/^569\d{8}$/.test(digits)) {
+    localDigits = digits.slice(3);
+  } else if (/^\d{8}$/.test(digits)) {
+    localDigits = digits;
+  } else {
+    return "";
+  }
+
+  return `+56 9 ${localDigits.slice(0, 4)} ${localDigits.slice(4)}`;
 }
 
 function getSmtpConfig() {
@@ -218,9 +268,9 @@ function buildContactEmail(contactData) {
     "",
     `Nombre: ${contactData.nombre}`,
     `Email: ${contactData.email}`,
-    `Telefono: ${formatOptionalField(contactData.telefono)}`,
+    `Teléfono: ${formatOptionalField(contactData.telefono)}`,
     `Empresa: ${formatOptionalField(contactData.empresa)}`,
-    `Ciudad: ${formatOptionalField(contactData.ciudad)}`,
+    `Región: ${formatOptionalField(contactData.ciudad)}`,
     `Servicio requerido: ${formatOptionalField(contactData.servicio)}`,
     "Mensaje:",
     contactData.mensaje,

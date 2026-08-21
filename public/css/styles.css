@@ -1399,6 +1399,44 @@ textarea:focus {
   box-shadow: 0 0 0 4px rgba(31, 90, 66, 0.12);
 }
 
+.phone-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  background: #fcfdfc;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.phone-input:focus-within {
+  border-color: rgba(31, 90, 66, 0.55);
+  box-shadow: 0 0 0 4px rgba(31, 90, 66, 0.12);
+}
+
+.phone-prefix {
+  padding-left: 16px;
+  color: var(--green-900);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.phone-input input {
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  padding-left: 8px;
+  box-shadow: none;
+}
+
+.phone-input input:focus {
+  box-shadow: none;
+}
+
+.phone-input:has(input.is-invalid) {
+  border-color: #b42318;
+  background: #fffafa;
+}
+
 input.is-invalid,
 select.is-invalid,
 textarea.is-invalid {
