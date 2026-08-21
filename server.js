@@ -11,7 +11,7 @@ const MAX_FIELD_LENGTHS = {
   empresa: 160,
   ciudad: 120,
   servicio: 160,
-  mensaje: 2000,
+  mensaje: 1000,
 };
 const SMTP_ENV_KEYS = [
   "SMTP_HOST",
@@ -31,6 +31,22 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+app.get("/inicio", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+app.get("/servicios", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "servicios.html"));
+});
+
+app.get("/nosotros", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "nosotros.html"));
+});
+
+app.get("/contacto", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "contacto.html"));
 });
 
 app.post("/contacto", async (req, res) => {
@@ -130,6 +146,10 @@ function validateContactData(contactData) {
     errors.email = "Ingresa tu email.";
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactData.email)) {
     errors.email = "Ingresa un email valido.";
+  }
+
+  if (!contactData.telefono) {
+    errors.telefono = "Ingresa tu telefono.";
   }
 
   if (!contactData.mensaje) {

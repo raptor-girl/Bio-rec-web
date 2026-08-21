@@ -465,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const initActiveNavigation = () => {
-    const menuLinks = Array.from(document.querySelectorAll('.site-nav a:not(.btn)'));
+    const menuLinks = Array.from(document.querySelectorAll('.site-nav a'));
 
     if (menuLinks.length === 0) {
       return;
@@ -473,9 +473,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const sectionByPage = {
       'index.html': 'inicio',
+      inicio: 'inicio',
       'servicios.html': 'servicios',
+      servicios: 'servicios',
       'nosotros.html': 'nosotros',
+      nosotros: 'nosotros',
       'contacto.html': 'contacto',
+      contacto: 'contacto',
     };
 
     const normalizePage = (pathname) => {
@@ -520,7 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    if (currentPage === 'index.html') {
+    if (currentPage === 'index.html' || currentPage === 'inicio') {
       addObservedSection(document.querySelector('main #inicio') || document.querySelector('main .hero'), 'inicio');
     }
 
@@ -659,12 +663,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const requiredMessages = {
     nombre: 'Ingresa tu nombre.',
     email: 'Ingresa tu email.',
+    telefono: 'Ingresa tu teléfono.',
     mensaje: 'Cuéntanos brevemente qué necesitas.',
   };
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const messageMaxLength = 1000;
   const fieldNames = ['nombre', 'email', 'telefono', 'empresa', 'ciudad', 'servicio', 'mensaje'];
   const getField = (name) => contactForm.elements.namedItem(name);
+  const messageCounter = document.querySelector('#mensaje-counter');
+  const submitButton = contactForm.querySelector('button[type="submit"]');
+  const submitButtonText = submitButton ? submitButton.textContent : '';
 
   const setFieldError = (name, message = '') => {
     const field = getField(name);
@@ -684,15 +693,50 @@ document.addEventListener('DOMContentLoaded', () => {
     formStatus.className = 'form-status';
   };
 
-  const showStatus = (message, type) => {
+  const scrollStatusIntoView = () => {
+    window.setTimeout(() => {
+      formStatus.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 40);
+  };
+
+  const showStatus = (message, type, shouldScroll = false) => {
     formStatus.textContent = message;
     formStatus.className = `form-status is-visible is-${type}`;
+
+    if (shouldScroll) {
+      scrollStatusIntoView();
+    }
+  };
+
+  const setSubmitting = (isSubmitting) => {
+    if (!submitButton) {
+      return;
+    }
+
+    submitButton.disabled = isSubmitting;
+    submitButton.textContent = isSubmitting ? 'Enviando...' : submitButtonText;
+  };
+
+  const updateMessageCounter = () => {
+    const messageField = getField('mensaje');
+
+    if (!messageField || !messageCounter) {
+      return;
+    }
+
+    const currentLength = messageField.value.length;
+    messageCounter.textContent = `${currentLength}/${messageMaxLength}`;
+    messageCounter.classList.toggle('is-limit', currentLength > messageMaxLength);
   };
 
   const validateForm = () => {
     const errors = {};
     const nombre = getField('nombre').value.trim();
     const email = getField('email').value.trim();
+    const telefono = getField('telefono').value.trim();
     const mensaje = getField('mensaje').value.trim();
 
     if (!nombre) {
@@ -705,8 +749,14 @@ document.addEventListener('DOMContentLoaded', () => {
       errors.email = 'Ingresa un email válido.';
     }
 
+    if (!telefono) {
+      errors.telefono = requiredMessages.telefono;
+    }
+
     if (!mensaje) {
       errors.mensaje = requiredMessages.mensaje;
+    } else if (mensaje.length > messageMaxLength) {
+      errors.mensaje = `El mensaje no puede superar ${messageMaxLength} caracteres.`;
     }
 
     fieldNames.forEach((name) => {
@@ -725,7 +775,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setFieldError(field.name);
     clearStatus();
+
+    if (field.name === 'mensaje') {
+      updateMessageCounter();
+    }
   });
+
+  updateMessageCounter();
 
   contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -734,9 +790,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const errors = validateForm();
 
     if (Object.keys(errors).length > 0) {
-      showStatus('Revisa los campos obligatorios antes de enviar.', 'error');
+      showStatus('Revisa los campos obligatorios antes de enviar.', 'error', true);
       return;
     }
+
+    setSubmitting(true);
 
     try {
       showStatus('Enviando...', 'success');
@@ -751,14 +809,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const result = await response.json();
 
       if (!response.ok || !result.ok) {
-        showStatus(result.message || 'No se pudo enviar el mensaje. Intenta nuevamente.', 'error');
+        showStatus(result.message || 'No se pudo enviar el mensaje. Intenta nuevamente.', 'error', true);
         return;
       }
 
-      showStatus(result.message || 'Mensaje enviado correctamente.', 'success');
+      showStatus(result.message || 'Mensaje enviado correctamente.', 'success', true);
       contactForm.reset();
+      updateMessageCounter();
     } catch (error) {
-      showStatus('No se pudo enviar el mensaje. Intenta nuevamente.', 'error');
+      showStatus('No se pudo enviar el mensaje. Intenta nuevamente.', 'error', true);
+    } finally {
+      setSubmitting(false);
     }
   });
 });
