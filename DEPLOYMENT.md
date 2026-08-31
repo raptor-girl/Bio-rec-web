@@ -184,7 +184,6 @@ public/
   index.html
   contacto.html
   nosotros.html
-  operacion.html
   servicios.html
   css/
     styles.css
